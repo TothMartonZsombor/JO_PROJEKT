@@ -23,7 +23,9 @@ class ItemController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('items', 'public');
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('items'), $imageName);
+            $imagePath = 'items/' . $imageName;
         }
 
         $item = new Item();
@@ -31,7 +33,7 @@ class ItemController extends Controller
         $item->theme = $request->theme;
         $item->year = $request->year;
         $item->story = $request->story;
-        $item->image_path = 'storage/' . $imagePath;
+        $item->image_path = $imagePath;
         $item->save();
 
         return response()->json(['message' => 'Sikeres mentés'], 201);
